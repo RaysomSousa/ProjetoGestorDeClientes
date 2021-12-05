@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +22,7 @@ namespace ProjetoGestorDeClientes
         enum Menu { Listagem = 1, Adicionar =2 ,Remover =3 , Sair =4}
         static void Main(string[] args)
         {
+            Carregar();
             bool escolheuSair = false;
             while (!escolheuSair)
             {
@@ -57,6 +60,7 @@ namespace ProjetoGestorDeClientes
             cliente.CPF = Console.ReadLine();
 
             clientes.Add(cliente);
+            Salvar();
             Console.WriteLine("cadastro concluído, aperte ENTER para sair.");
             Console.ReadLine();
         }
@@ -83,6 +87,44 @@ namespace ProjetoGestorDeClientes
             }
             Console.WriteLine("cadastro concluído, aperte ENTER para sair.");
             Console.ReadLine();
+
+        }
+        static void Salvar()
+
+        {
+
+            FileStream stream = new FileStream("clients.dat", FileMode.OpenOrCreate);
+
+            BinaryFormatter enconder = new BinaryFormatter();
+            enconder.Serialize(stream, clientes);
+            stream.Close();
+
+        }
+        static void Carregar()
+
+        {
+
+            FileStream stream = new FileStream("clients.dat", FileMode.OpenOrCreate);
+
+            try
+
+            {
+
+                BinaryFormatter enconder = new BinaryFormatter();
+                clientes = (List<Cliente>)enconder.Deserialize(stream);
+
+                if (clientes == null)
+                {
+                    clientes = new List<Cliente>();
+                }
+            }
+            catch (Exception )
+            {
+                clientes = new List<Cliente>();
+            }
+            stream.Close();
         }
     }
+
 }
+
